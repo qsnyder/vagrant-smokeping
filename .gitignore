@@ -1,0 +1,7 @@
+# Ignore cruft files that are created from vagrant (provisioner, machine)
+
+.vagrant
+
+# Ignore .swp files created from sloppy vim usage
+
+*.swp

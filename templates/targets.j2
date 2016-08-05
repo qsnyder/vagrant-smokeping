@@ -4,7 +4,7 @@ probe = FPing
 
 menu = Top
 title = Host Reachability During Cutover
-remark = Welcome to the SmokePing container within Docker.\
+remark = Welcome to the SmokePing VM within Vagrant.\
          Measuring loss and latency to critical hosts during implementation window
 
 {% for menu in IPv4 %}
@@ -15,9 +15,9 @@ title = {{menu}}
 
 ++ {{host.name}}
 menu = {{host.name}}
-title = {{host.name}} IPv4
-host = {{host.address}} 	
-{% endfor %} 
+title = {{host.name}} IPv4 ({{host.address}})
+host = {{host.address}}
+{% endfor %}
 {% endfor %}
 
 {% for menu in IPv6 %}
@@ -29,7 +29,7 @@ probe = FPing6
 
 ++ {{host.name}}
 menu = {{host.name}}
-title = {{host.name}} IPv6
-host = {{host.address}} 	
-{% endfor %} 
+title = {{host.name}} IPv6 ({{host.address}})
+host = {{host.address}}
+{% endfor %}
 {% endfor %}

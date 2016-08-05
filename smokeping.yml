@@ -3,6 +3,13 @@
   hosts: all
   vars:
     timezone: America/Phoenix
+    IPv4:
+      IPv4_Hosts:
+        - {name: Router1, address: 192.168.128.12}
+        - {name: Router2, address: 3.3.3.34}
+    IPv6:
+      IPv6_Hosts:
+        - {name: GoogleDNS, address: "2001:4860:4860::8888"}
 
   tasks:
 
@@ -12,8 +19,16 @@
 
     - name: set timezone
       template: src=templates/timezone dest=/etc/timezone
-      notify: update tzdata
       become: true
+
+    - name: update tzdata
+      command: /usr/sbin/dpkg-reconfigure --frontend noninteractive tzdata
+      become: true
+
+    - name: Create Target file for Smokeping using Jinja2
+      template:
+        src: ./templates/targets.j2
+        dest: ~/Targets
 
     - name: ensure smokeping is installed
       apt: name=smokeping update_cache=yes
@@ -25,8 +40,14 @@
       notify:
       - restart apache2
 
-    - name: copy configuration files to appropriate location
+    - name: copy configuration files to appropriate location (except Targets)
       command: cp -r /vagrant/config.d /etc/smokeping/
+      become: true
+      notify:
+      - restart apache2
+
+    - name: copy Targets file into config.d
+      command: cp /home/vagrant/Targets /etc/smokeping/config.d/
       become: true
       notify:
       - restart apache2
@@ -48,9 +69,7 @@
 
   handlers:
 
-    - name: update tzdata
-      command: /usr/sbin/dpkg-reconfigure --frontend noninteractive tzdata
-      become: true
- 
+
+
     - name: restart apache2
       service: name=apache2 state=restarted
