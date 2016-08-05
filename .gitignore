@@ -5,3 +5,7 @@
 # Ignore .swp files created from sloppy vim usage
 
 *.swp
+
+# Ignore .retry files that are left due to any Ansible failures
+
+*.retry
