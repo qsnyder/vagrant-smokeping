@@ -1,0 +1,56 @@
+---
+- name: Install functioning SmokePing service in Vagrant VM
+  hosts: all
+  vars:
+    timezone: America/Phoenix
+
+  tasks:
+
+    - name: set localtime
+      copy: src=/usr/share/zoneinfo/{{ timezone }} dest=/etc/localtime
+      become: true
+
+    - name: set timezone
+      template: src=templates/timezone dest=/etc/timezone
+      notify: update tzdata
+      become: true
+
+    - name: ensure smokeping is installed
+      apt: name=smokeping update_cache=yes
+      become: true
+
+    - name: soft-link for apache2 configuration in conf-available
+      file: src=/etc/smokeping/apache2.conf dest=/etc/apache2/conf-available/smokeping.conf state=link
+      become: true
+      notify:
+      - restart apache2
+
+    - name: copy configuration files to appropriate location
+      command: cp -r /vagrant/config.d /etc/smokeping/
+      become: true
+      notify:
+      - restart apache2
+
+    - name: enable cgid in apache2
+      command: a2enmod cgid
+      become: true
+      notify:
+      - restart apache2
+
+    - name: enable smokeping in apache2
+      command: a2enconf smokeping
+      become: true
+      notify:
+      - restart apache2
+
+    - name: restart smokeping service
+      service: name=smokeping state=restarted
+
+  handlers:
+
+    - name: update tzdata
+      command: /usr/sbin/dpkg-reconfigure --frontend noninteractive tzdata
+      become: true
+ 
+    - name: restart apache2
+      service: name=apache2 state=restarted

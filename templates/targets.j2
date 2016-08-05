@@ -1,0 +1,35 @@
+*** Targets ***
+
+probe = FPing
+
+menu = Top
+title = Host Reachability During Cutover
+remark = Welcome to the SmokePing container within Docker.\
+         Measuring loss and latency to critical hosts during implementation window
+
+{% for menu in IPv4 %}
++ {{menu}}
+menu = {{menu}}
+title = {{menu}}
+{% for host in IPv4.IPv4_Hosts %}
+
+++ {{host.name}}
+menu = {{host.name}}
+title = {{host.name}} IPv4
+host = {{host.address}} 	
+{% endfor %} 
+{% endfor %}
+
+{% for menu in IPv6 %}
++ {{menu}}
+menu = {{menu}}
+title = {{menu}}
+probe = FPing6
+{% for host in IPv6.IPv6_Hosts %}
+
+++ {{host.name}}
+menu = {{host.name}}
+title = {{host.name}} IPv6
+host = {{host.address}} 	
+{% endfor %} 
+{% endfor %}

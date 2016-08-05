@@ -1,0 +1,25 @@
+---
+- name: Ansible routine for building targets file and automating Vagrant VM build
+  hosts: localhost
+  connection: local
+  gather_facts: no
+
+  vars:
+    IPv4:
+      IPv4_Hosts:
+        - {name: Router1, address: 192.168.128.1}
+        - {name: Router2, address: 3.3.3.3}
+    IPv6:
+      IPv6_Hosts:
+        - {name: GoogleDNS, address: "2001:4860:4860::8888"}
+
+  tasks:
+
+  - name: Create Target file for Smokeping using Jinja2
+    template:
+      src: ./templates/targets.j2
+      dest: ./config.d/Targets
+
+  - name: Run the Vagrant VM
+    command: vagrant up
+
