@@ -66,6 +66,7 @@
 
     - name: restart smokeping service
       service: name=smokeping state=restarted
+      become: true
 
   handlers:
 
@@ -73,3 +74,4 @@
 
     - name: restart apache2
       service: name=apache2 state=restarted
+      become: true
